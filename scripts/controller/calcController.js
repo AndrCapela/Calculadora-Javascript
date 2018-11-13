@@ -45,8 +45,8 @@ class CalcController {
         return this._operation[this._operation.length - 1]
     }
 
-    setLastOperation(value){
-        this._operation[this._operation.length -1] = value;
+    setLastOperation(value) {
+        this._operation[this._operation.length - 1] = value;
     }
 
     isOperator(value) {
@@ -59,7 +59,7 @@ class CalcController {
                 this.setLastOperation(value);
             }
             else if (isNaN(value)) {
-                console.log(value);
+
             }
             else {
                 this._operation.push(value);
@@ -67,9 +67,16 @@ class CalcController {
 
         }
         else {
-            this.setLastOperation(parseInt(this.getLastOperation().toString() + value.toString())); 
-            console.log(this._operation);
+            if (this.isOperator(value)) {
+                this._operation.push(value);
+            }
+            else {
+                this.setLastOperation(parseInt(this.getLastOperation().toString() + value.toString()));
+            }
+
+
         }
+        console.log(this._operation);
     }
 
     execBtn(value) {
