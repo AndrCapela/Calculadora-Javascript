@@ -6,18 +6,19 @@ class CalcController {
         this._timeEl = document.querySelector("#hora");
         this._dateEl = document.querySelector("#data");
         this._currentDate;
-        this.initialize();
-        this.initButtonsEvents();
         this._operation = [];
+        this.initButtonsEvents();
+        this.initialize();
     }
 
     initialize() {
-        this.displayCalc = 0;
+        this.displayCalc;
         this.setDisplayDateTime();
         let interval = setInterval(() => {
             this.setDisplayDateTime();
         }, 1000);
 
+        this.setLastNumberToDisplay();
         /*setTimeout(()=>{
             clearInterval(interval);
         }, 10000)*/
@@ -31,10 +32,12 @@ class CalcController {
 
     clearAll() {
         this._operation = [];
+        this.setLastNumberToDisplay();
     }
 
     clearEntry() {
         this._operation.pop();
+        this.setLastNumberToDisplay();
     }
 
     setError() {
@@ -54,9 +57,18 @@ class CalcController {
     }
 
     calc() {
-        let last = this._operation.pop();
+        let last;
+        if (this._operation.length > 3) {
+            last = this._operation.pop();
+        }
         let result = eval(this._operation.join(""));
-        this._operation = [result, last];
+        if (last == "%") {
+            result /= 100;
+            this._operation = [result];
+        } else {
+            this._operation = [result];
+            if (last) this._operation.push(last);
+        }
         this.setLastNumberToDisplay();
     }
 
@@ -69,12 +81,16 @@ class CalcController {
     }
 
     setLastNumberToDisplay() {
+        let lastNumber;
         for (let i = this._operation.length - 1; i >= 0; i--) {
             if (!this.isOperator(this._operation[i])) {
-                this.displayCalc = this._operation[i];
+                lastNumber = this._operation[i];
                 break;
             }
         }
+        if (!lastNumber) lastNumber = 0;
+
+        this.displayCalc = lastNumber;
     }
 
     addOperation(value) {
@@ -133,7 +149,7 @@ class CalcController {
                 this.addOperation('.');
                 break;
             case 'igual':
-
+                this.calc();
                 break;
 
             case '0':
